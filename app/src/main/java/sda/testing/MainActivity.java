@@ -53,7 +53,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         while ((chunks = buff.readLine()) != null) {
                             dta.append(chunks);
                         }
-                        text.setText(dta);
+                        text.post(new Runnable() {
+                            public void run() {
+                                text.setText(dta);
+                            }
+                        });
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
