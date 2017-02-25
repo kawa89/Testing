@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
-    ArrayList<Integer> list;
+    ArrayList<Integer> list = new ArrayList<>(1);
 
     TextView text;
 
