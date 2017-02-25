@@ -30,27 +30,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
+        Thread thread = new Thread(new Runnable() {
 
-        URL url = null;
-        try {
-            url = new URL("http://www.android.com/");
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        HttpURLConnection urlConnection = null;
-        try {
-            urlConnection = (HttpURLConnection) url.openConnection();
-            InputStream it = new BufferedInputStream(urlConnection.getInputStream());
-            InputStreamReader read = new InputStreamReader(it);
-            BufferedReader buff = new BufferedReader(read);
-            final StringBuilder dta = new StringBuilder();
-            String chunks;
-            while ((chunks = buff.readLine()) != null) {
-                dta.append(chunks);
+            @Override
+            public void run() {
+                try {
+                    URL url = null;
+                    try {
+                        url = new URL("http://www.android.com/");
+                    } catch (MalformedURLException e) {
+                        e.printStackTrace();
+                    }
+                    HttpURLConnection urlConnection = null;
+                    try {
+                        urlConnection = (HttpURLConnection) url.openConnection();
+
+                        InputStream it = new BufferedInputStream(urlConnection.getInputStream());
+                        InputStreamReader read = new InputStreamReader(it);
+                        BufferedReader buff = new BufferedReader(read);
+                        final StringBuilder dta = new StringBuilder();
+                        String chunks;
+                        while ((chunks = buff.readLine()) != null) {
+                            dta.append(chunks);
+                        }
+                        text.setText(dta);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-            text.setText(dta);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        });
+
+        thread.start();
     }
 }
