@@ -7,10 +7,12 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
-    ArrayList<Integer> list = new ArrayList<>(1);
+    List<Integer> list = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10));
 
     TextView text;
 
@@ -25,8 +27,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        list.add(1);
-        list.add(10);
-        text.setText(Integer.toString(list.get(1)));
+        int size = list.size();
+        for (int i = 0; i < size; i++) {
+            if (list.get(i) % 2 == 0) {
+                list.remove(i);
+            }
+        }
+        text.setText(Arrays.toString(list.toArray()));
     }
 }
