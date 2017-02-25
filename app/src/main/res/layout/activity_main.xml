@@ -13,6 +13,7 @@
         android:text="Make the exception"/>
 
     <TextView
+        android:id="@+id/text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Initial text"/>
