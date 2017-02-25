@@ -14,6 +14,6 @@ public class SecondActivity extends AppCompatActivity {
         setContentView(R.layout.activity_second);
         textView = (TextView) findViewById(R.id.text_second);
         int extra = getIntent().getExtras().getInt("key");
-        textView.setText(extra);
+        textView.setText(String.valueOf(extra));
     }
 }
