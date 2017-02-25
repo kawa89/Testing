@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View view) {
         Intent intent = new Intent(this, SecondActivity.class);
-        intent.putExtra("key", 1);
+        intent.putExtra("key", 2131099681);
         startActivity(intent);
     }
 }
