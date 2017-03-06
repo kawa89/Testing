@@ -1,0 +1,248 @@
+Index: app/src/test/java/sda/testing/MockitoZadanie1.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/test/java/sda/testing/MockitoZadanie1.java	(revision da81800dabeafa7e3c99270c028e1d3cb27ee9ad)
++++ app/src/test/java/sda/testing/MockitoZadanie1.java	(revision )
+@@ -9,6 +9,10 @@
+ 
+ import static org.junit.Assert.assertEquals;
+ import static org.junit.Assert.assertNotEquals;
++import static org.mockito.ArgumentMatchers.anyInt;
++import static org.mockito.Mockito.doThrow;
++import static org.mockito.Mockito.mock;
++import static org.mockito.Mockito.when;
+ 
+ public class MockitoZadanie1 {
+ 
+@@ -18,6 +22,10 @@
+     public void test1() {
+         MyClass test = null;
+ 
++        // rozwiązanie
++        test = mock(MyClass.class);
++        when(test.getUniqueId()).thenReturn(43);
++        // rozwiązanie
+ 
+         assertEquals(test.getUniqueId(), 43);
+     }
+@@ -26,6 +34,10 @@
+     public void test2() {
+         Iterator i = null;
+ 
++        // rozwiązanie
++        i = mock(Iterator.class);
++        when(i.next()).thenReturn("Mockito").thenReturn("jest fajne");
++        // rozwiązanie
+ 
+         assertEquals("Mockito jest fajne", i.next() + " " + i.next());
+     }
+@@ -34,6 +46,11 @@
+     public void test3() {
+         Comparable c = null;
+ 
++        // rozwiązanie
++        c = mock(Comparable.class);
++        when(c.compareTo("Mockito")).thenReturn(1);
++        when(c.compareTo("Android Studio")).thenReturn(2);
++        // rozwiązanie
+ 
+         assertEquals(1, c.compareTo("Mockito"));
+         assertEquals(2, c.compareTo("Android Studio"));
+@@ -44,8 +61,11 @@
+         Comparable c = null;
+ 
+         // użuj jednej metody when!
++        // rozwiązanie
++        c = mock(Comparable.class);
++        when(c.compareTo(anyInt())).thenReturn(-1);
++        // rozwiązanie
+ 
+-
+         assertEquals(-1, c.compareTo(9));
+         assertEquals(-1, c.compareTo(-12));
+         assertNotEquals(-1, c.compareTo(0.032f));
+@@ -59,7 +79,10 @@
+         OutputStream stream = null;
+ 
+         // close() powinien wyrzucić wyjątek MyException()
+-
++        // rozwiązanie
++        stream = mock(OutputStream.class);
++        doThrow(new MyException()).when(stream).close();
++        // rozwiązanie
+ 
+         OutputStreamWriter streamWriter = new OutputStreamWriter(stream);
+         streamWriter.close();
+\ No newline at end of file
+Index: app/src/test/java/sda/testing/MockitoZadanie3.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/test/java/sda/testing/MockitoZadanie3.java	(revision da81800dabeafa7e3c99270c028e1d3cb27ee9ad)
++++ app/src/test/java/sda/testing/MockitoZadanie3.java	(revision )
+@@ -6,6 +6,7 @@
+ import java.util.List;
+ 
+ import static org.junit.Assert.assertEquals;
++import static org.mockito.Mockito.doReturn;
+ import static org.mockito.Mockito.spy;
+ import static org.mockito.Mockito.when;
+ 
+@@ -17,6 +18,10 @@
+     public void test1() {
+         Calculator test = null;
+ 
++        // rozwiązanie
++        test = spy(new Calculator(50, 10));
++        when(test.add()).thenReturn(3);
++        // rozwiązanie
+ 
+         assertEquals(3, test.add());
+         assertEquals(40, test.subtract());
+@@ -27,6 +32,9 @@
+     public void test2() {
+         List spyList = spy(new LinkedList());
+ 
++        // rozwiązanie
++        doReturn("foo").when(spyList).get(0);
++        // rozwiązanie
+ 
+         assertEquals("foo", spyList.get(0));
+ 
+\ No newline at end of file
+Index: app/src/test/java/sda/testing/MockitoZadanie4.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/test/java/sda/testing/MockitoZadanie4.java	(revision da81800dabeafa7e3c99270c028e1d3cb27ee9ad)
++++ app/src/test/java/sda/testing/MockitoZadanie4.java	(revision )
+@@ -1,10 +1,44 @@
+ package sda.testing;
+ 
++import android.content.res.Resources;
++
++import org.junit.Test;
++import org.mockito.ArgumentMatchers;
++
++import sda.testing.activity.MainActivity;
++
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertNotEquals;
++import static org.mockito.ArgumentMatchers.anyInt;
++import static org.mockito.Mockito.mock;
++import static org.mockito.Mockito.when;
++
+ public class MockitoZadanie4 {
+ 
+     // 1. Make a MainActivity mock, that has mocked Resources, when anyInt is passed to getString() always a "NotTesting" String is returned
+     // 2. Make a MainActivity mock, that has mocked Resources, when only R.string.app_name is passed to getString(), always a "NotTesting" String
+     //    is returned. Check if other string is not overrided.
+ 
++    // rozwiązanie
++    @Test
++    public void test1() {
++        MainActivity mainActivity = mock(MainActivity.class);
++        Resources mockResources = mock(Resources.class);
++        when(mockResources.getString(anyInt())).thenReturn("NotTesting");
++        when(mainActivity.getResources()).thenReturn(mockResources);
+ 
++        assertEquals("NotTesting", mainActivity.getResources().getString(R.string.app_name));
++        assertEquals("NotTesting", mainActivity.getResources().getString(R.string.prompt_email));
++    }
++
++    @Test
++    public void test2() {
++        MainActivity mainActivity = mock(MainActivity.class);
++        Resources mockResources = mock(Resources.class);
++        when(mockResources.getString(ArgumentMatchers.eq(R.string.app_name))).thenReturn("NotTesting");
++        when(mainActivity.getResources()).thenReturn(mockResources);
++
++        assertEquals("NotTesting", mainActivity.getResources().getString(R.string.app_name));
++        assertNotEquals("NotTesting", mainActivity.getResources().getString(R.string.prompt_email));
++    }
+ }
+\ No newline at end of file
+Index: app/src/test/java/sda/testing/MockitoZadanie2.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/test/java/sda/testing/MockitoZadanie2.java	(revision da81800dabeafa7e3c99270c028e1d3cb27ee9ad)
++++ app/src/test/java/sda/testing/MockitoZadanie2.java	(revision )
+@@ -2,8 +2,17 @@
+ 
+ import org.junit.Before;
+ import org.junit.Test;
++import org.mockito.ArgumentMatchers;
+ import org.mockito.Mockito;
+ 
++import static org.mockito.ArgumentMatchers.anyInt;
++import static org.mockito.Mockito.atLeastOnce;
++import static org.mockito.Mockito.atMost;
++import static org.mockito.Mockito.never;
++import static org.mockito.Mockito.only;
++import static org.mockito.Mockito.times;
++import static org.mockito.Mockito.verify;
++
+ public class MockitoZadanie2 {
+ 
+     // Napisz odpowiednie weryfikacje
+@@ -18,7 +27,7 @@
+     public void test1() {
+         test.testing(12);
+         // sprawdź czy wywołano metodę testing() z parametrem 12. Użyj ArtumentMatchers.eq
+-
++        verify(test).testing(ArgumentMatchers.eq(12));
+     }
+ 
+     @Test
+@@ -27,7 +36,7 @@
+         test.getUniqueId();
+ 
+         // sprawdź czy dwukrotnie wywołano metode getUniqueId()
+-
++        verify(test, times(2)).getUniqueId();
+     }
+ 
+     @Test
+@@ -35,7 +44,7 @@
+         test.testing(12);
+ 
+         // sprawdź czy nigdy nie wywołano metody getUniqueId()
+-
++        verify(test, never()).getUniqueId();
+     }
+ 
+     @Test
+@@ -44,7 +53,7 @@
+         test.testing(13);
+ 
+         // sprawdz czy przynajmniej raz wywołano metodę testing() z dowolym Integerem
+-
++        verify(test, atLeastOnce()).testing(anyInt());
+     }
+ 
+     @Test
+@@ -54,7 +63,7 @@
+         test.testing(12);
+ 
+         // sprawdz czy co najwyżej dwa razy wywołano metodę testing() z parametrem 12
+-
++        verify(test, atMost(2)).testing(ArgumentMatchers.eq(12));
+     }
+ 
+     @Test
+@@ -62,7 +71,7 @@
+         test.testing(99);
+ 
+         // sprawdz czy razy wywołano tylko metodę testing() z parametrem 99
+-
++        verify(test, only()).testing(ArgumentMatchers.eq(99));
+     }
+ 
+ 
+\ No newline at end of file

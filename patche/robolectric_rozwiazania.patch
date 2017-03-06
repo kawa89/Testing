@@ -1,0 +1,543 @@
+Index: app/src/test/java/sda/testing/Zadanie3CustomShadow.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/test/java/sda/testing/Zadanie3CustomShadow.java	(revision 1981ff234b7c761cd2f60cc1dadc2712e859aa41)
++++ app/src/test/java/sda/testing/Zadanie3CustomShadow.java	(revision )
+@@ -1,9 +1,16 @@
+ package sda.testing;
+ 
++import android.content.res.Resources;
++
++import org.junit.Test;
+ import org.junit.runner.RunWith;
+ import org.robolectric.RobolectricTestRunner;
++import org.robolectric.RuntimeEnvironment;
+ import org.robolectric.annotation.Config;
+ 
++import static org.hamcrest.core.Is.is;
++import static org.junit.Assert.assertThat;
++
+ @RunWith(RobolectricTestRunner.class)
+ @Config(constants = BuildConfig.class, sdk = 21)
+ public class Zadanie3CustomShadow {
+@@ -13,6 +20,18 @@
+     // 2. Nadpiszesz za pomocą własnej implementacji klasy ShadowResources, metodę pobierania QuantityString'a, tak aby zwracała tekst "Some String" - tylko
+     //    ale tylko dla QuantityString'a o id numberOfSongsAvailable. Dodaj inny QuantityString do resource'ów i sprawdź, czy on się nie nadpisuje.
+ 
++    // rozwiązanie
++    @Test
++    public void test1_checkPlural_OneElement() {
++        Resources resources = RuntimeEnvironment.application.getResources();
++        assertThat(resources.getQuantityString(R.plurals.numberOfSongsAvailable, 1, 1), is("1 song found."));
++    }
+ 
++    @Config(shadows = Zadanie3CustomShadowResources.class)
++    @Test
++    public void test2_checkPlural_OneElement_customShadow() {
++        Resources resources = RuntimeEnvironment.application.getResources();
++        assertThat(resources.getQuantityString(R.plurals.numberOfSongsAvailable, 1, 1), is("Some String"));
++    }
+ }
+ 
+Index: app/src/test/java/sda/testing/Zadanie1MainActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/test/java/sda/testing/Zadanie1MainActivity.java	(revision 1981ff234b7c761cd2f60cc1dadc2712e859aa41)
++++ app/src/test/java/sda/testing/Zadanie1MainActivity.java	(revision )
+@@ -1,9 +1,24 @@
+ package sda.testing;
+ 
++import android.view.Menu;
++import android.widget.Button;
++import android.widget.TextView;
++
++import org.junit.Before;
++import org.junit.Test;
+ import org.junit.runner.RunWith;
++import org.robolectric.Robolectric;
+ import org.robolectric.RobolectricTestRunner;
+ import org.robolectric.annotation.Config;
++import org.robolectric.shadows.ShadowToast;
+ 
++import sda.testing.activity.MainActivity;
++
++import static org.hamcrest.core.Is.is;
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertThat;
++import static org.robolectric.Shadows.shadowOf;
++
+ @RunWith(RobolectricTestRunner.class)
+ @Config(constants = BuildConfig.class, sdk = 21)
+ public class Zadanie1MainActivity {
+@@ -17,5 +32,60 @@
+     // 6. Czy domyślny tytuł ActionBar'a jest poprawny
+     // 7. Czy niemiecki tytuł ActionBar'a jest poprawny
+ 
++    // rozwiązanie
++    private MainActivity activity;
++    private Button button1;
++    private Button button2;
++    private TextView text;
+ 
++    @Before
++    public void setUp() {
++        activity = Robolectric.setupActivity(MainActivity.class);
++        button1 = (Button) activity.findViewById(R.id.button1);
++        button2 = (Button) activity.findViewById(R.id.button2);
++        text = (TextView) activity.findViewById(R.id.text);
++    }
++
++    @Test
++    public void test1_noButtonClicked() {
++        assertEquals("Initial text", text.getText());
++    }
++
++    @Test
++    public void test2_button1Click() {
++        button1.performClick();
++        assertEquals("Button 1", text.getText());
++    }
++
++    @Test
++    public void test3_severalButtonClicked() {
++        button1.performClick();
++        assertEquals("Button 1", text.getText());
++        button2.performClick();
++        assertEquals("Button 2", text.getText());
++    }
++
++    @Test
++    public void test4_menuInflatedProperly() {
++        final Menu menu = shadowOf(activity).getOptionsMenu();
++        assertThat(menu.findItem(R.id.item1).getTitle().toString(), is("First menu item"));
++        assertThat(menu.findItem(R.id.item2).getTitle().toString(), is("Second menu item"));
++    }
++
++    @Test
++    public void test5_clickMenuItem_ToastShowed() {
++        shadowOf(activity).clickMenuItem(R.id.item1);
++        assertThat(ShadowToast.getTextOfLatestToast(), is("Clicked Item 1"));
++    }
++
++    @Test
++    public void test6_toolbarTitle() {
++        assertThat(activity.getActionBar().getTitle().toString(), is("Testing"));
++    }
++
++    @Config(qualifiers = "de")
++    @Test
++    public void test7_toolbarTitle_Deutsch() {
++        assertThat(activity.getActionBar().getTitle().toString(), is("Testing-de"));
++    }
+ }
+\ No newline at end of file
+Index: app/src/test/java/sda/testing/Zadanie5BootCompleteReceiver.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/test/java/sda/testing/Zadanie5BootCompleteReceiver.java	(revision 1981ff234b7c761cd2f60cc1dadc2712e859aa41)
++++ app/src/test/java/sda/testing/Zadanie5BootCompleteReceiver.java	(revision )
+@@ -1,10 +1,21 @@
+ package sda.testing;
+ 
++import android.content.Intent;
++
++import org.junit.Before;
++import org.junit.Test;
+ import org.junit.runner.RunWith;
+ import org.robolectric.RobolectricTestRunner;
+ import org.robolectric.annotation.Config;
+ import org.robolectric.shadows.ShadowApplication;
+ 
++import java.util.List;
++
++import sda.testing.receiver.BootCompleteReceiver;
++
++import static junit.framework.Assert.assertTrue;
++import static org.junit.Assert.assertThat;
++
+ @RunWith(RobolectricTestRunner.class)
+ @Config(constants = BuildConfig.class)
+ public class Zadanie5BootCompleteReceiver {
+@@ -17,5 +28,57 @@
+     // 3. Dla ambitnych - po wykonaniu zadania 2, przepisz je z wykorzystaniem własnego TypeSafeMatcher'a, który jako parametr przyjmuje klasę Class,
+     //  a działa na obiekcie List<ShadowApplication.Wrapper>.
+ 
++    // rozwiązanie
++    @Before
++    public void setUp() throws Exception {
++        application = ShadowApplication.getInstance();
++    }
+ 
++    @Test
++    public void test1_registerServiceOnDeviceBootCompleted() {
++        Intent intent = new Intent(Intent.ACTION_BOOT_COMPLETED);
++        assertTrue("Reboot Listener not registered ", application.hasReceiverForIntent(intent));
++    }
++
++    @Test
++    public void test2_myBootCompleteReceiverIsRegistered() {
++        List<ShadowApplication.Wrapper> registeredReceivers = application.getRegisteredReceivers();
++        boolean receiverFound = false;
++        for (ShadowApplication.Wrapper wrapper : registeredReceivers) {
++            if (!receiverFound) {
++                receiverFound = BootCompleteReceiver.class.getSimpleName().equals(wrapper.getBroadcastReceiver().getClass().getSimpleName());
++            }
++        }
++        assertTrue("No receiver found", receiverFound);
++    }
++
++    @Test
++    public void test3_myBootCompleteReceiverIsRegisteredAdvanced() {
++        assertThat(application.getRegisteredReceivers(), new ReceiverMatcher(BootCompleteReceiver.class));
++    }
++
++    public class ReceiverMatcher extends org.hamcrest.TypeSafeMatcher<List<ShadowApplication.Wrapper>> {
++
++        private final String receiverSimpleName;
++
++        ReceiverMatcher(final Class receiverSimpleName) {
++            this.receiverSimpleName = receiverSimpleName.getSimpleName();
++        }
++
++        @Override
++        public void describeTo(org.hamcrest.Description description) {
++            description.appendText("matches regular expression=`" + receiverSimpleName + "`");
++        }
++
++        @Override
++        protected boolean matchesSafely(List<ShadowApplication.Wrapper> item) {
++            boolean receiverFound = false;
++            for (ShadowApplication.Wrapper wrapper : item) {
++                if (!receiverFound) {
++                    receiverFound = receiverSimpleName.equals(wrapper.broadcastReceiver.getClass().getSimpleName());
++                }
++            }
++            return receiverFound;
++        }
++    }
+ }
+Index: app/src/test/java/sda/testing/Zadanie4AlarmManager.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/test/java/sda/testing/Zadanie4AlarmManager.java	(revision 1981ff234b7c761cd2f60cc1dadc2712e859aa41)
++++ app/src/test/java/sda/testing/Zadanie4AlarmManager.java	(revision )
+@@ -1,9 +1,22 @@
+ package sda.testing;
+ 
++import android.app.Application;
++import android.content.Intent;
++
++import org.junit.Before;
++import org.junit.Test;
+ import org.junit.runner.RunWith;
+ import org.robolectric.RobolectricTestRunner;
++import org.robolectric.RuntimeEnvironment;
+ import org.robolectric.annotation.Config;
+ 
++import sda.testing.receiver.SampleBroadcastReceiver;
++import sda.testing.service.SampleIntentService;
++
++import static org.junit.Assert.assertEquals;
++import static org.junit.Assert.assertNotNull;
++import static org.robolectric.Shadows.shadowOf;
++
+ @RunWith(RobolectricTestRunner.class)
+ @Config(constants = BuildConfig.class)
+ public class Zadanie4AlarmManager {
+@@ -11,5 +24,20 @@
+     // Napisz testy, które sprawdzą, czy ( przyda się metoda getNextStartedService() ):
+     // 1. Czy metoda onReceive() z SampleBroadcastReceiver'a uruchomi odpowiedni IntentService
+ 
++    // rozwiązanie
++    private Application application;
+ 
++    @Before
++    public void setUp() throws Exception {
++        application = RuntimeEnvironment.application;
++    }
++
++    @Test
++    public void test1_startIntentServiceFromOnReceive() {
++        new SampleBroadcastReceiver().onReceive(application, new Intent());
++
++        Intent serviceIntent = shadowOf(application).getNextStartedService();
++        assertNotNull(serviceIntent);
++        assertEquals(new Intent(application, SampleIntentService.class).getComponent(), serviceIntent.getComponent());
++    }
+ }
+Index: app/src/test/java/sda/testing/service/Zadanie6SampleIntentService.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/test/java/sda/testing/service/Zadanie6SampleIntentService.java	(revision 1981ff234b7c761cd2f60cc1dadc2712e859aa41)
++++ app/src/test/java/sda/testing/service/Zadanie6SampleIntentService.java	(revision )
+@@ -1,11 +1,24 @@
+ package sda.testing.service;
+ 
++import android.app.Application;
++import android.content.Context;
++import android.content.Intent;
++
++import org.junit.After;
++import org.junit.Before;
++import org.junit.Test;
+ import org.junit.runner.RunWith;
++import org.robolectric.Robolectric;
+ import org.robolectric.RobolectricTestRunner;
++import org.robolectric.RuntimeEnvironment;
++import org.robolectric.android.controller.ServiceController;
+ import org.robolectric.annotation.Config;
++import org.robolectric.fakes.RoboSharedPreferences;
+ 
+ import sda.testing.BuildConfig;
+ 
++import static org.junit.Assert.assertEquals;
++
+ @RunWith(RobolectricTestRunner.class)
+ @Config(constants = BuildConfig.class)
+ public class Zadanie6SampleIntentService {
+@@ -14,4 +27,30 @@
+     // 1. przetestuj działanie IntentService'u SampleIntentService. Wywołaj onHandleIntent() z odpowiednio przygotowanym intentem.
+     //    Do sprawdzenia SharedPreferences wykorzystaj klasę RoboSharedPreferences
+ 
++    // rozwiązanie
++    private SampleIntentService service;
++    private ServiceController<SampleIntentService> controller;
++
++    @Before
++    public void setUp() {
++        controller = Robolectric.buildService(SampleIntentService.class);
++        service = controller.create().get();
++    }
++
++    @Test
++    public void test1() {
++        Application application = RuntimeEnvironment.application;
++        RoboSharedPreferences preferences = (RoboSharedPreferences) application.getSharedPreferences("example", Context.MODE_PRIVATE);
++        Intent intent = new Intent(application, SampleIntentService.class);
++        intent.putExtra("INTENT_KEY", "data");
++
++        service.onHandleIntent(intent);
++
++        assertEquals("data", preferences.getString("SHARED_PREF_KEY", ""));
++    }
++
++    @After
++    public void tearDown() {
++        controller.destroy();
++    }
+ }
+Index: app/src/test/java/sda/testing/Zadanie3CustomShadowResources.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/test/java/sda/testing/Zadanie3CustomShadowResources.java	(revision )
++++ app/src/test/java/sda/testing/Zadanie3CustomShadowResources.java	(revision )
+@@ -0,0 +1,18 @@
++package sda.testing;
++
++import android.content.res.Resources;
++
++import org.robolectric.annotation.Implements;
++import org.robolectric.shadows.ShadowResources;
++
++@Implements(Resources.class)
++public class Zadanie3CustomShadowResources extends ShadowResources {
++
++    @Override
++    public String getQuantityString(int resId, int quantity) throws Resources.NotFoundException {
++        if (resId == R.plurals.numberOfSongsAvailable) {
++            return "Some String";
++        }
++        return super.getQuantityString(resId, quantity);
++    }
++}
+Index: app/src/test/java/sda/testing/Zadanie7MainActivityLifecycle.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/test/java/sda/testing/Zadanie7MainActivityLifecycle.java	(revision 1981ff234b7c761cd2f60cc1dadc2712e859aa41)
++++ app/src/test/java/sda/testing/Zadanie7MainActivityLifecycle.java	(revision )
+@@ -1,9 +1,22 @@
+ package sda.testing;
+ 
++import android.os.Bundle;
++import android.widget.Button;
++import android.widget.TextView;
++
++import org.junit.After;
++import org.junit.Before;
++import org.junit.Test;
+ import org.junit.runner.RunWith;
++import org.robolectric.Robolectric;
+ import org.robolectric.RobolectricTestRunner;
++import org.robolectric.android.controller.ActivityController;
+ import org.robolectric.annotation.Config;
+ 
++import sda.testing.activity.MainActivity;
++
++import static org.junit.Assert.assertEquals;
++
+ @RunWith(RobolectricTestRunner.class)
+ @Config(constants = BuildConfig.class, sdk = 21)
+ public class Zadanie7MainActivityLifecycle {
+@@ -12,5 +25,50 @@
+     // 1. czy po kliknieciu przycisku 1 TextView będzie mieć ustawiony tekst "Button 1", następnie po zasymulowaniu rotacji,
+     // czy tekst w TextView powróci na domyślny.
+ 
++    // rozwiązanie
++    private Button button1;
++    private TextView text;
+ 
++    private ActivityController<MainActivity> controller;
++    private MainActivity activity;
++
++    @Before
++    public void setUp() {
++        controller = Robolectric.buildActivity(MainActivity.class);
++        activity = controller.create().start().resume().get();
++    }
++
++    @Test
++    public void test1_mainActivityLifecycle() {
++        bindViews();
++        button1.performClick();
++        assertEquals("Button 1", text.getText());
++
++        Bundle bundle = new Bundle();
++        controller.saveInstanceState(bundle)
++                .pause()
++                .stop()
++                .destroy();
++
++        controller = Robolectric.buildActivity(MainActivity.class)
++                .create()
++                .start()
++                .restoreInstanceState(bundle)
++                .resume();
++        activity = controller.get();
++
++        bindViews();
++
++        assertEquals("Initial text", text.getText());
++    }
++
++    private void bindViews() {
++        button1 = (Button) activity.findViewById(R.id.button1);
++        text = (TextView) activity.findViewById(R.id.text);
++    }
++
++    @After
++    public void tearDown() {
++        controller.pause().stop().destroy();
++    }
+ }
+\ No newline at end of file
+Index: app/src/test/java/sda/testing/Zadanie2LoginActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/test/java/sda/testing/Zadanie2LoginActivity.java	(revision 1981ff234b7c761cd2f60cc1dadc2712e859aa41)
++++ app/src/test/java/sda/testing/Zadanie2LoginActivity.java	(revision )
+@@ -1,9 +1,28 @@
+ package sda.testing;
+ 
++import android.app.Activity;
++import android.content.Intent;
++import android.widget.Button;
++import android.widget.EditText;
++
++import org.junit.Before;
++import org.junit.Test;
+ import org.junit.runner.RunWith;
++import org.robolectric.Robolectric;
+ import org.robolectric.RobolectricTestRunner;
++import org.robolectric.RuntimeEnvironment;
+ import org.robolectric.annotation.Config;
++import org.robolectric.shadows.ShadowApplication;
+ 
++import sda.testing.activity.LoginActivity;
++import sda.testing.activity.MainActivity;
++
++import static org.hamcrest.CoreMatchers.nullValue;
++import static org.hamcrest.core.Is.is;
++import static org.hamcrest.core.IsNull.notNullValue;
++import static org.junit.Assert.assertThat;
++import static org.robolectric.Shadows.shadowOf;
++
+ @RunWith(RobolectricTestRunner.class)
+ @Config(constants = BuildConfig.class, sdk = 21)
+ public class Zadanie2LoginActivity {
+@@ -14,5 +33,59 @@
+     // 3. scenariusz zalogowania się bez podanych danych do logowania
+     // 4. scenariusz zalogowania się bez z błędnymi danymi do logowania
+ 
++    // rozwiązanie
++    private EditText emailView;
++    private EditText passwordView;
++    private Button button;
+ 
++    @Before
++    public void setUp() {
++        Activity activity = Robolectric.setupActivity(LoginActivity.class);
++        button = (Button) activity.findViewById(R.id.email_sign_in_button);
++        emailView = (EditText) activity.findViewById(R.id.email);
++        passwordView = (EditText) activity.findViewById(R.id.password);
++    }
++
++    @Test
++    public void test1_loginSuccess() {
++        emailView.setText("foo@example.com");
++        passwordView.setText("foo");
++        button.performClick();
++
++        assertThat(emailView.getError(), is(nullValue()));
++        assertThat(passwordView.getError(), is(nullValue()));
++    }
++
++    @Test
++    public void test2_loginSuccess_MainActivityStarted() {
++        emailView.setText("foo@example.com");
++        passwordView.setText("foo");
++        button.performClick();
++
++        ShadowApplication application = shadowOf(RuntimeEnvironment.application);
++        Intent nextStartedActivity = application.getNextStartedActivity();
++        assertThat(nextStartedActivity.getComponent().getClassName(), is(MainActivity.class.getCanonicalName()));
++    }
++
++    @Test
++    public void test3_loginWithEmptyUsernameAndPassword() {
++        button.performClick();
++
++        ShadowApplication application = shadowOf(RuntimeEnvironment.application);
++        assertThat(application.getNextStartedActivity(), is(nullValue()));
++        assertThat(emailView.getError(), is(notNullValue()));
++        assertThat(passwordView.getError(), is(notNullValue()));
++    }
++
++    @Test
++    public void test4_loginFailure() {
++        emailView.setText("invalid@email");
++        passwordView.setText("invalidpassword");
++        button.performClick();
++
++        ShadowApplication application = shadowOf(RuntimeEnvironment.application);
++        assertThat(application.getNextStartedActivity(), is(nullValue()));
++        assertThat(emailView.getError(), is(notNullValue()));
++        assertThat(passwordView.getError(), is(notNullValue()));
++    }
+ }
+\ No newline at end of file
