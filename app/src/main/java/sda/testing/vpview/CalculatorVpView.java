@@ -1,7 +1,7 @@
-package sda.testing.mvpview;
+package sda.testing.vpview;
 
 @SuppressWarnings("DefaultFileTemplate")
-public interface CalculatorMvpView extends AbstractMvpView {
+public interface CalculatorVpView extends AbstractVpView {
     void setValue(String value);
 
     void setFormula(String value);

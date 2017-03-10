@@ -16,10 +16,10 @@ import me.grantland.widget.AutofitHelper;
 import sda.testing.Config;
 import sda.testing.Constants;
 import sda.testing.R;
-import sda.testing.mvpview.CalculatorMvpView;
 import sda.testing.presenter.CalculatorPresenter;
+import sda.testing.vpview.CalculatorVpView;
 
-public class CalculatorActivity extends AppCompatActivity implements CalculatorMvpView {
+public class CalculatorActivity extends AppCompatActivity implements CalculatorVpView {
 
     @BindView(R.id.result)
     TextView result;
@@ -102,7 +102,7 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorM
         presenter.handleOperation(Constants.ROOT);
     }
 
-    @OnClick(R.id.btn_reset)
+    @OnClick(R.id.btn_clear)
     public void clearLongClicked() {
         presenter.handleReset();
     }

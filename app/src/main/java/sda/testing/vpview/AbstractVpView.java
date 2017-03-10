@@ -1,8 +1,8 @@
-package sda.testing.mvpview;
+package sda.testing.vpview;
 
 import android.content.Context;
 
 @SuppressWarnings("DefaultFileTemplate")
-public interface AbstractMvpView {
+public interface AbstractVpView {
     Context getMyContext();
 }

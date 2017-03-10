@@ -3,12 +3,12 @@ package sda.testing.presenter;
 import sda.testing.Constants;
 import sda.testing.Formatter;
 import sda.testing.R;
-import sda.testing.mvpview.CalculatorMvpView;
+import sda.testing.vpview.CalculatorVpView;
 
 @SuppressWarnings("DefaultFileTemplate")
-public class CalculatorPresenter implements AbstractPresenter<CalculatorMvpView> {
+public class CalculatorPresenter implements AbstractPresenter<CalculatorVpView> {
 
-    private CalculatorMvpView calculatorMvpView;
+    private CalculatorVpView calculatorMvpView;
 
     private String displayedValue;
     private String lastKey;
@@ -258,7 +258,7 @@ public class CalculatorPresenter implements AbstractPresenter<CalculatorMvpView>
     }
 
     @Override
-    public void attachView(CalculatorMvpView view) {
+    public void attachView(CalculatorVpView view) {
         this.calculatorMvpView = view;
     }
 
