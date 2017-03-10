@@ -22,11 +22,6 @@
             android:label="@string/about"
             android:parentActivityName=".activities.CalculatorActivity"/>
 
-        <activity
-            android:name=".activities.LicenseActivity"
-            android:label="@string/third_party_licences"
-            android:parentActivityName=".activities.AboutActivity"/>
-
     </application>
 
 </manifest>

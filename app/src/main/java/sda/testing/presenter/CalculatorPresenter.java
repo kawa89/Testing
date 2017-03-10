@@ -125,10 +125,10 @@ public class CalculatorPresenter implements AbstractPresenter<CalculatorVpView> 
     }
 
     private void divideNumbers() {
-        double resultValue = 0;
-        if (secondValue != 0) {
-            resultValue = baseValue / secondValue;
+        if (secondValue == 0) {
+            throw new ArithmeticException("dzielisz przez 0!");
         }
+        double resultValue = baseValue / secondValue;
 
         updateResult(resultValue);
     }
