@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
@@ -17,6 +18,10 @@ public class MockitoZadanie3 {
     public void test1() {
         Calculator test = null;
 
+        // rozwiązanie
+        test = spy(new Calculator(50, 10));
+        when(test.add()).thenReturn(3);
+        // rozwiązanie
 
         assertEquals(3, test.add());
         assertEquals(40, test.subtract());
@@ -27,6 +32,9 @@ public class MockitoZadanie3 {
     public void test2() {
         List spyList = spy(new LinkedList());
 
+        // rozwiązanie
+        doReturn("foo").when(spyList).get(0);
+        // rozwiązanie
 
         assertEquals("foo", spyList.get(0));
 

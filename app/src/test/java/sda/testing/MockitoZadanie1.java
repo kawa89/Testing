@@ -9,6 +9,10 @@ import java.util.Iterator;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class MockitoZadanie1 {
 
@@ -18,6 +22,10 @@ public class MockitoZadanie1 {
     public void test1() {
         MyClass test = null;
 
+        // rozwiązanie
+        test = mock(MyClass.class);
+        when(test.getUniqueId()).thenReturn(43);
+        // rozwiązanie
 
         assertEquals(test.getUniqueId(), 43);
     }
@@ -26,6 +34,10 @@ public class MockitoZadanie1 {
     public void test2() {
         Iterator i = null;
 
+        // rozwiązanie
+        i = mock(Iterator.class);
+        when(i.next()).thenReturn("Mockito").thenReturn("jest fajne");
+        // rozwiązanie
 
         assertEquals("Mockito jest fajne", i.next() + " " + i.next());
     }
@@ -34,6 +46,11 @@ public class MockitoZadanie1 {
     public void test3() {
         Comparable c = null;
 
+        // rozwiązanie
+        c = mock(Comparable.class);
+        when(c.compareTo("Mockito")).thenReturn(1);
+        when(c.compareTo("Android Studio")).thenReturn(2);
+        // rozwiązanie
 
         assertEquals(1, c.compareTo("Mockito"));
         assertEquals(2, c.compareTo("Android Studio"));
@@ -44,7 +61,10 @@ public class MockitoZadanie1 {
         Comparable c = null;
 
         // użuj jednej metody when!
-
+        // rozwiązanie
+        c = mock(Comparable.class);
+        when(c.compareTo(anyInt())).thenReturn(-1);
+        // rozwiązanie
 
         assertEquals(-1, c.compareTo(9));
         assertEquals(-1, c.compareTo(-12));
@@ -59,7 +79,10 @@ public class MockitoZadanie1 {
         OutputStream stream = null;
 
         // close() powinien wyrzucić wyjątek MyException()
-
+        // rozwiązanie
+        stream = mock(OutputStream.class);
+        doThrow(new MyException()).when(stream).close();
+        // rozwiązanie
 
         OutputStreamWriter streamWriter = new OutputStreamWriter(stream);
         streamWriter.close();

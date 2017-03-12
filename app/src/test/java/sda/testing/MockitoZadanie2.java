@@ -2,7 +2,16 @@ package sda.testing;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
+
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.atMost;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.only;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 public class MockitoZadanie2 {
 
@@ -18,7 +27,7 @@ public class MockitoZadanie2 {
     public void test1() {
         test.testing(12);
         // sprawdź czy wywołano metodę testing() z parametrem 12. Użyj ArtumentMatchers.eq
-
+        verify(test).testing(ArgumentMatchers.eq(12));
     }
 
     @Test
@@ -27,7 +36,7 @@ public class MockitoZadanie2 {
         test.getUniqueId();
 
         // sprawdź czy dwukrotnie wywołano metode getUniqueId()
-
+        verify(test, times(2)).getUniqueId();
     }
 
     @Test
@@ -35,7 +44,7 @@ public class MockitoZadanie2 {
         test.testing(12);
 
         // sprawdź czy nigdy nie wywołano metody getUniqueId()
-
+        verify(test, never()).getUniqueId();
     }
 
     @Test
@@ -44,7 +53,7 @@ public class MockitoZadanie2 {
         test.testing(13);
 
         // sprawdz czy przynajmniej raz wywołano metodę testing() z dowolym Integerem
-
+        verify(test, atLeastOnce()).testing(anyInt());
     }
 
     @Test
@@ -54,7 +63,7 @@ public class MockitoZadanie2 {
         test.testing(12);
 
         // sprawdz czy co najwyżej dwa razy wywołano metodę testing() z parametrem 12
-
+        verify(test, atMost(2)).testing(ArgumentMatchers.eq(12));
     }
 
     @Test
@@ -62,7 +71,7 @@ public class MockitoZadanie2 {
         test.testing(99);
 
         // sprawdz czy razy wywołano tylko metodę testing() z parametrem 99
-
+        verify(test, only()).testing(ArgumentMatchers.eq(99));
     }
 
 
