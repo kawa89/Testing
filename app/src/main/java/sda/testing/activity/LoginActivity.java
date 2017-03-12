@@ -17,7 +17,7 @@ public class LoginActivity extends Activity {
      * A dummy authentication store containing known user names and passwords.
      */
     private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:foo", "bar@example.com:bar"
+            "foo@example.com:foo", "bar@example.com:bar", "x:x"
     };
 
     private EditText mEmailView;

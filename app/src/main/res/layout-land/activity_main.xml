@@ -51,4 +51,10 @@
         android:text="Initial text"
         android:textSize="30sp"
         tools:text="MyText"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:listitem="@layout/layout_item"/>
 </LinearLayout>

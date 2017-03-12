@@ -2,6 +2,8 @@ package sda.testing.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,10 +14,14 @@ import android.widget.Toast;
 import android.widget.Toolbar;
 
 import sda.testing.R;
+import sda.testing.RecyclerViewAdapter;
 
-public class MainActivity extends Activity implements View.OnClickListener {
+public class MainActivity extends Activity implements View.OnClickListener, RecyclerViewAdapter.OnItemClickListener {
 
     TextView text;
+    private RecyclerView myRecyclerView;
+    private LinearLayoutManager linearLayoutManager;
+    private RecyclerViewAdapter myRecyclerViewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +38,32 @@ public class MainActivity extends Activity implements View.OnClickListener {
         (findViewById(R.id.button2)).setOnClickListener(this);
         (findViewById(R.id.button3)).setOnClickListener(this);
         (findViewById(R.id.button4)).setOnClickListener(this);
+        myRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+
+        linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+
+        myRecyclerViewAdapter = new RecyclerViewAdapter(this);
+        myRecyclerViewAdapter.setOnItemClickListener(this);
+        myRecyclerView.setAdapter(myRecyclerViewAdapter);
+        myRecyclerView.setLayoutManager(linearLayoutManager);
+
+        //insert dummy items
+        myRecyclerViewAdapter.add("Android0");
+        myRecyclerViewAdapter.add("Android1");
+        myRecyclerViewAdapter.add("Android2");
+        myRecyclerViewAdapter.add("Android3");
+        myRecyclerViewAdapter.add("Android4");
+        myRecyclerViewAdapter.add("Android5");
+        myRecyclerViewAdapter.add("Android6");
+        myRecyclerViewAdapter.add("Android7");
+        myRecyclerViewAdapter.add("Android8");
+        myRecyclerViewAdapter.add("Android9");
+        myRecyclerViewAdapter.add("Android10");
+    }
+
+    @Override
+    public void onItemClick(RecyclerViewAdapter.ItemHolder item, int position) {
+        Toast.makeText(this, position + " : " + item.getItemName(), Toast.LENGTH_SHORT).show();
     }
 
     @Override
