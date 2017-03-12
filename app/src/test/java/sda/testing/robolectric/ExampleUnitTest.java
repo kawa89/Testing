@@ -1,4 +1,4 @@
-package sda.testing;
+package sda.testing.robolectric;
 
 import org.junit.Test;
 
